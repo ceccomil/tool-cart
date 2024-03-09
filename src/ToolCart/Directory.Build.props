@@ -3,11 +3,10 @@
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Authors>GPM Dev Team</Authors>
-    <Company>GPM Development Ltd</Company>
-
+    <Authors>Chekko Milani</Authors>
+    <Company>Chekko Milani</Company>
+    <PackageVersion>0.0.1-alpha.0.1</PackageVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-    
   </PropertyGroup>
-
 </Project>
