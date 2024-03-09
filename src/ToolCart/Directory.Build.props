@@ -1,0 +1,13 @@
+﻿<Project>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Authors>GPM Dev Team</Authors>
+    <Company>GPM Development Ltd</Company>
+
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    
+  </PropertyGroup>
+
+</Project>
