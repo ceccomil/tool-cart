@@ -1,7 +1,10 @@
-﻿
-Console.WriteLine($"Total args: {args.Length}");
+﻿global using Example1;
+global using Microsoft.Extensions.Hosting;
+global using ToolCart.ConsoleHelpers;
+global using ToolCart.Host;
+global using ToolCart.Services;
 
-foreach (var arg in args)
-{
-  Console.WriteLine(arg);
-}
+
+await HostRunner.CreateAndRun<TestSvc>(
+  args,
+  "Application is starting");

@@ -10,7 +10,8 @@ internal sealed class CommandArgumentsProvider
 
   private readonly string[] _args;
 
-  public bool IsEmpty => Data.Count == 0;
+  public bool IsEmpty => Data.Count == 0 &&
+    _args.Length == 0;
 
   public CommandArgumentsProvider(
     string[]? args = default)

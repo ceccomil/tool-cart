@@ -95,7 +95,7 @@ public class CommandArgumentsProviderTests
 
     // Act
     Action act = () => GetConfigurationManager(
-      args.ToArray());
+      [.. args]);
 
     // Assert
     act
