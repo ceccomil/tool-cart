@@ -15,7 +15,7 @@ public static class HostRunner
     Action<IHostApplicationBuilder>? appBuilderConfig = default,
     Action<IServiceCollection>? servicesConfig = default,
     Action<IHost>? appConfig = default) where TMainService
-    : class, IMainEntrySvc
+    : class, IExecutor
   {
     ExtendedConsole.TrySetCursorVisibility(false);
 
@@ -36,9 +36,10 @@ public static class HostRunner
 
     builder
       .Services
-      .AddSingleton(typeof(IMainEntrySvc), typeof(TMainService))
+      .AddScoped(typeof(IExecutor), typeof(TMainService))
+      .AddSingleton<IAppOrchestrator, AppOrchestrator>()
       .AddHostedService(x => x
-        .GetRequiredService<IMainEntrySvc>());
+        .GetRequiredService<IAppOrchestrator>());
 
     servicesConfig?.Invoke(builder.Services);
 

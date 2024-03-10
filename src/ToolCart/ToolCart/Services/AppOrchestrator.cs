@@ -1,23 +1,22 @@
 ﻿namespace ToolCart.Services;
 
-/// <summary>
-/// Base entry service.
-/// </summary>
-public abstract class BaseMainEntrySvc(
+internal interface IAppOrchestrator : IHostedService
+{
+  Guid ExecutionId { get; }
+}
+
+internal sealed class AppOrchestrator(
   IHostApplicationLifetime _appLifetime,
   IServiceProvider _serviceProvider)
-  : IMainEntrySvc
+  : IAppOrchestrator
 {
-  private readonly ILogger<BaseMainEntrySvc>? _logger =
+  private readonly ILogger? _logger =
     _serviceProvider
-    .GetService<ILogger<BaseMainEntrySvc>>();
+    .GetService<ILogger<AppOrchestrator>>();
 
   private readonly CancellationToken _stoppingToken =
     _appLifetime.ApplicationStopping;
 
-  /// <summary>
-  /// Execution identifier.
-  /// </summary>
   public Guid ExecutionId { get; private set; }
 
   private void AppendInfoLog(
@@ -28,7 +27,9 @@ public abstract class BaseMainEntrySvc(
       return;
     }
 
-    _logger.LogInformation(mex);
+    _logger.LogInformation(
+      "{Mex}",
+      mex);
   }
 
   private void AppendDebugLog(
@@ -39,7 +40,9 @@ public abstract class BaseMainEntrySvc(
       return;
     }
 
-    _logger.LogDebug(mex);
+    _logger.LogDebug(
+      "{Mex}",
+      mex);
   }
 
   private void AppendErrorLog(
@@ -51,7 +54,31 @@ public abstract class BaseMainEntrySvc(
       return;
     }
 
-    _logger.LogError(ex, mex);
+    _logger.LogError(ex,
+      "{Mex}",
+      mex);
+  }
+
+  private async Task ExecMainTask(
+    IServiceScope scope)
+  {
+    var executor = scope
+      .ServiceProvider
+      .GetService<IExecutor>();
+
+    if (executor is null)
+    {
+      AppendErrorLog(
+        "The executor service is not found!",
+         null);
+
+      _appLifetime.StopApplication();
+
+      return;
+    }
+
+    await executor.MainTask(
+      _stoppingToken);
   }
 
   private async Task Run()
@@ -60,12 +87,22 @@ public abstract class BaseMainEntrySvc(
     {
       ExecutionId = Guid.NewGuid();
 
+      var executionScope = _serviceProvider
+        .CreateScope();
+
       AppendDebugLog(
-        $"Starting a new execution ({ExecutionId}).");
+        $"Starting a new execution ({ExecutionId}) " +
+        $"a new scope has been created ({executionScope
+          .GetHashCode()}).");
 
       try
       {
-        await MainTask(_stoppingToken);
+        // Small delay to avoid the CPU overloading.
+        await Task.Delay(100);
+        await ExecMainTask(executionScope);
+
+        AppendDebugLog(
+        $"Execution: {ExecutionId} is completed.");
       }
       catch (Exception ex)
       {
@@ -73,32 +110,12 @@ public abstract class BaseMainEntrySvc(
           $"Execution: {ExecutionId} is " +
           $"completed with errors!",
           ex);
-
-        continue;
       }
 
-      AppendDebugLog(
-        $"Execution: {ExecutionId} is completed.");
+      executionScope.Dispose();
     }
   }
 
-  /// <summary>
-  /// Quits the application.
-  /// </summary>
-  protected void Quit()
-  {
-    _appLifetime.StopApplication();
-  }
-
-  /// <summary>
-  /// Tool kick off.
-  /// </summary>
-  public abstract Task MainTask(
-    CancellationToken cancellationToken);
-
-  /// <summary>
-  /// Hosted service start.
-  /// </summary>
   public Task StartAsync(
     CancellationToken cancellationToken)
   {
@@ -108,17 +125,14 @@ public abstract class BaseMainEntrySvc(
         cancellationToken);
     }
 
-    _ = Run();
-
     AppendInfoLog(
       "The Application is running.");
+
+    _ = Run();
 
     return Task.CompletedTask;
   }
 
-  /// <summary>
-  /// Hosted service stop.
-  /// </summary>
   public async Task StopAsync(
     CancellationToken cancellationToken)
   {
@@ -139,3 +153,5 @@ public abstract class BaseMainEntrySvc(
       "The application has been shut down.");
   }
 }
+
+
