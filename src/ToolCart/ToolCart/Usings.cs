@@ -12,3 +12,8 @@ global using ToolCart.Services;
   .Runtime
   .CompilerServices
   .InternalsVisibleTo("ToolCart.Tests")]
+
+[assembly: System
+  .Runtime
+  .CompilerServices
+  .InternalsVisibleTo("DynamicProxyGenAssembly2")]

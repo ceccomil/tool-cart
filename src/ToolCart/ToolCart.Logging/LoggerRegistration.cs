@@ -5,6 +5,43 @@
 /// </summary>
 public static class LoggerRegistration
 {
+  private const string ALLOWCONSOLE = "AllowConsoleLogging";
+  private const string TRUE = "true";
+
+  private static bool IsConsoleAllowed(
+    this IConfiguration conf) => $"{conf[ALLOWCONSOLE]}"
+      .Equals(TRUE, StringComparison.OrdinalIgnoreCase);
+
+  private static Recipients GetRecipients(
+    this IServiceProvider sp)
+  {
+    var config = sp
+      .GetRequiredService<IConfiguration>();
+
+    var recipients = Recipients.File;
+
+    if (config.IsConsoleAllowed())
+    {
+      recipients |= Recipients.Console;
+    }
+
+    return recipients;
+  }
+
+  private static LoggerFilters GetFilters(
+    this IServiceProvider sp)
+  {
+    var filtersOptions = sp
+      .GetService<IOptions<LoggerFilters>>();
+
+    if (filtersOptions is null)
+    {
+      return [];
+    }
+
+    return filtersOptions.Value;
+  }
+
   private static ILoggingBuilder ToolCartLoggerRegistration(
     this ILoggingBuilder builder,
     LoggerFilters filters)
@@ -23,6 +60,35 @@ public static class LoggerRegistration
     return builder;
   }
 
+  private static IServiceCollection ConfigLogger(
+    this IServiceCollection services,
+    Recipients recipients)
+  {
+    services
+      .Configure<CaptainLoggerOptions>(opts =>
+      {
+        opts.DefaultColor = ConsoleColor.DarkGray;
+        opts.LogRecipients = recipients;
+        opts.FileRotation = LogRotation.Day;
+        opts.TimeIsUtc = true;
+        opts.TriggerAsyncEvents = true;
+      });
+
+    return services;
+  }
+
+  private static IServiceCollection AddLogging(
+    this IServiceCollection services,
+    LoggerFilters filters)
+  {
+    services
+      .AddLogging(
+        builder => builder
+          .ToolCartLoggerRegistration(filters));
+
+    return services;
+  }
+
   /// <summary>
   /// Default logger registration and configuration.
   /// To enable Console logging, either set the 
@@ -35,33 +101,9 @@ public static class LoggerRegistration
     using var sp = services
       .BuildServiceProvider();
 
-    var conf = sp
-      .GetRequiredService<IConfiguration>();
-
-    var recipients = Recipients.File;
-
-    if ($"{conf["AllowConsoleLogging"]}"
-      .Equals("true", StringComparison.OrdinalIgnoreCase))
-    {
-      recipients |= Recipients.Console;
-    }
-
-    var filtersOptions = sp
-      .GetService<IOptions<LoggerFilters>>();
-
-    var filters = filtersOptions?.Value
-      ?? [];
-
     services
-      .Configure<CaptainLoggerOptions>(opts =>
-      {
-        opts.DefaultColor = ConsoleColor.DarkGray;
-        opts.LogRecipients = recipients;
-        opts.FileRotation = LogRotation.Day;
-        opts.TimeIsUtc = true;
-      })
-      .AddLogging(builder => builder
-        .ToolCartLoggerRegistration(filters));
+      .ConfigLogger(sp.GetRecipients())
+      .AddLogging(sp.GetFilters());
 
     return services;
   }

@@ -5,6 +5,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>ToolCart.Logging</AssemblyName>
     <PackageId>ToolCart.Logging</PackageId>
+    <Description>Default logger for ToolCart</Description>
     <PackageTags>tool;.net;toolcart;cart;framework;console;logging;</PackageTags>
   </PropertyGroup>
 

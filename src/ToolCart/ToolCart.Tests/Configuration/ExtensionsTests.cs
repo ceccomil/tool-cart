@@ -60,10 +60,14 @@ public class ExtensionsTests
   public void AddAppSettingsConfiguration()
   {
     // Arrange
-    IConfigurationBuilder confBuilder = new ConfigurationManager();
+    IConfigurationManager confBuilder = new ConfigurationManager();
+
+    _hostBuilder
+      .Configuration
+      .Returns(confBuilder);
 
     // Act
-    confBuilder
+    _hostBuilder
       .AddAppSettingsConfiguration();
 
     var toolName = confBuilder

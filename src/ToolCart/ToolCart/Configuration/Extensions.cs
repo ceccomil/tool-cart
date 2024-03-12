@@ -24,16 +24,19 @@ public static class Extensions
   /// <summary>
   /// Adds the appsettings.json file to the configuration.
   /// </summary>
-  public static IConfigurationBuilder AddAppSettingsConfiguration(
-    this IConfigurationBuilder builder)
+  public static IHostApplicationBuilder AddAppSettingsConfiguration(
+    this IHostApplicationBuilder builder)
   {
+    IConfigurationBuilder confBuilder = builder
+      .Configuration;
+
     string assemblyFolder = Path
       .GetDirectoryName(
         Assembly
         .GetExecutingAssembly()
         .Location)!;
 
-    builder
+    confBuilder
      .AddJsonFile(
        Path.Combine(
          assemblyFolder,

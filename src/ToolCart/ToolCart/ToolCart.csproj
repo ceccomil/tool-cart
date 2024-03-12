@@ -6,6 +6,7 @@
     <AssemblyName>ToolCart</AssemblyName>
     <PackageId>ToolCart</PackageId>
     <PackageTags>tool;.net;toolcart;cart;framework;console;</PackageTags>
+    <Description>Simple base framework for .NET tools implementation</Description>
   </PropertyGroup>
 
   <ItemGroup>

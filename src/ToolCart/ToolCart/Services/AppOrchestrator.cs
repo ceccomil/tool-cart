@@ -83,7 +83,10 @@ internal sealed class AppOrchestrator(
 
   private async Task Run()
   {
-    while (!_stoppingToken.IsCancellationRequested)
+    var consecutiveFailures = 0;
+
+    while (!_stoppingToken.IsCancellationRequested &&
+      consecutiveFailures <= 5)
     {
       ExecutionId = Guid.NewGuid();
 
@@ -103,6 +106,8 @@ internal sealed class AppOrchestrator(
 
         AppendDebugLog(
         $"Execution: {ExecutionId} is completed.");
+
+        consecutiveFailures = 0;
       }
       catch (Exception ex)
       {
@@ -110,6 +115,18 @@ internal sealed class AppOrchestrator(
           $"Execution: {ExecutionId} is " +
           $"completed with errors!",
           ex);
+
+        consecutiveFailures++;
+      }
+
+      if (consecutiveFailures > 5)
+      {
+        AppendErrorLog(
+          "The application is being stopped " +
+          "due to consecutive failures!",
+          null);
+
+        _appLifetime.StopApplication();
       }
 
       executionScope.Dispose();
@@ -133,15 +150,13 @@ internal sealed class AppOrchestrator(
     return Task.CompletedTask;
   }
 
-  public async Task StopAsync(
+  public Task StopAsync(
     CancellationToken cancellationToken)
   {
     if (cancellationToken.IsCancellationRequested)
     {
-      await Task.FromCanceled(
+      return Task.FromCanceled(
         cancellationToken);
-
-      return;
     }
 
     if (!_stoppingToken.IsCancellationRequested)
@@ -151,6 +166,8 @@ internal sealed class AppOrchestrator(
 
     AppendInfoLog(
       "The application has been shut down.");
+
+    return Task.CompletedTask;
   }
 }
 

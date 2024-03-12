@@ -1,6 +1,4 @@
-﻿using CaptainLogger;
-using Microsoft.Extensions.Hosting;
-namespace Example1;
+﻿namespace Example1;
 
 public interface ITestDiDisposable : IDisposable
 {

@@ -1,6 +1,7 @@
 ﻿global using CaptainLogger;
 global using Example1;
 global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Logging;
 global using ToolCart.ConsoleHelpers;
 global using ToolCart.Host;
@@ -8,10 +9,9 @@ global using ToolCart.Logging;
 global using ToolCart.Services;
 
 
-await HostRunner.CreateAndRun<MainSvc>(
-  args,
-  "Application is starting",
-  servicesConfig: services =>
+var hostRunner = new HostRunner()
+{
+  ServicesConfig = services =>
   {
     services
       .Configure<LoggerFilters>(opts =>
@@ -23,4 +23,11 @@ await HostRunner.CreateAndRun<MainSvc>(
       })
       .AddDefaultLogger()
       .AddScoped<ITestDiDisposable, TestDiDisposable>();
-  });
+
+    return Task.CompletedTask;
+  }
+};
+
+await hostRunner.CreateAndRun<MainSvc>(
+  args,
+  "Application is starting");
