@@ -5,8 +5,15 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Authors>Chekko Milani</Authors>
     <Company>Chekko Milani</Company>
-    <PackageVersion>0.0.1-alpha.0.1</PackageVersion>
+    <PackageVersion>0.0.1-alpha.1.0</PackageVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageProjectUrl>https://github.com/ceccomil/tool-cart</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
   </PropertyGroup>
 </Project>

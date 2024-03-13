@@ -1,0 +1,10 @@
+﻿global using FluentAssertions;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Hosting;
+global using Microsoft.Extensions.Logging;
+global using NSubstitute;
+global using ToolCart.Configuration;
+global using ToolCart.ConsoleHelpers;
+global using ToolCart.Services;
+global using Xunit;
