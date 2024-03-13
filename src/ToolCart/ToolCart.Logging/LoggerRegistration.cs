@@ -6,11 +6,6 @@
 public static class LoggerRegistration
 {
   private const string ALLOWCONSOLE = "AllowConsoleLogging";
-  private const string TRUE = "true";
-
-  private static bool IsConsoleAllowed(
-    this IConfiguration conf) => $"{conf[ALLOWCONSOLE]}"
-      .Equals(TRUE, StringComparison.OrdinalIgnoreCase);
 
   private static Recipients GetRecipients(
     this IServiceProvider sp)
@@ -20,7 +15,8 @@ public static class LoggerRegistration
 
     var recipients = Recipients.File;
 
-    if (config.IsConsoleAllowed())
+    if (config.ParameterlessArgCommandFound(
+      ALLOWCONSOLE))
     {
       recipients |= Recipients.Console;
     }

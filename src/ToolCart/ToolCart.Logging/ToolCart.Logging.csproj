@@ -13,4 +13,8 @@
     <PackageReference Include="CaptainLogger" Version="3.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ToolCart.Foundation\ToolCart.Foundation.csproj" />
+  </ItemGroup>
+
 </Project>

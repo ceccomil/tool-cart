@@ -126,6 +126,7 @@ internal sealed class AppOrchestrator(
           "due to consecutive failures!",
           null);
 
+        Environment.ExitCode = 1;
         _appLifetime.StopApplication();
       }
 
