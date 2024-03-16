@@ -1,8 +1,6 @@
-﻿using System.Reflection;
+﻿namespace ToolCart.Tests.Services;
 
-namespace ToolCart.Tests.Services;
-
-[Collection("AppOrchestratorTests")]
+[Collection("AppOrchestrator Tests")]
 public class AppOrchestratorTests
 {
   private readonly IHostApplicationLifetime _appLifetime = Substitute

@@ -10,7 +10,7 @@ public static class ConfigurationExtensions
   /// <summary>
   /// Check if the command line argument is found.
   /// </summary>
-  public static bool ParameterlessArgCommandFound(
+  public static bool SwitchIsOn(
     this IConfiguration conf,
     string arg) => $"{conf[arg]}".Equals(
       TRUE,

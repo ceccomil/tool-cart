@@ -1,15 +1,13 @@
 ﻿namespace ToolCart.Tests.ConsoleHelpers;
 
-[Collection("Console Tests")]
+[Collection(CONSOLE)]
 public class SpinnerTests
 {
   [Fact]
   public async Task Next_when_full_circle()
   {
     // Arrange
-    using var output = new StringWriter();
-    Console.SetOut(output);
-
+    Console.SetOut(SharedConsoleOut);
     var tasks = new List<Task>();
 
     // Act
@@ -23,18 +21,19 @@ public class SpinnerTests
     Spinner.Reset();
 
     // Assert
-    output
+    SharedConsoleOut
       .ToString()
       .Should()
       .Be("-\b\\\b|\b/\b-\b");
+
+    ResetConsoleOut();
   }
 
   [Fact]
   public async Task Next_when_cancellation_requested()
   {
     // Arrange
-    using var output = new StringWriter();
-    Console.SetOut(output);
+    Console.SetOut(SharedConsoleOut);
 
     var cts = new CancellationTokenSource();
 
@@ -50,9 +49,11 @@ public class SpinnerTests
 
     Spinner.Reset();
 
-    output
+    SharedConsoleOut
       .ToString()
       .Should()
       .Be("-\b");
+
+    ResetConsoleOut();
   }
 }

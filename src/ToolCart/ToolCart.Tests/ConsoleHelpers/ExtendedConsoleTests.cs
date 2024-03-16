@@ -1,14 +1,13 @@
 ﻿namespace ToolCart.Tests.ConsoleHelpers;
 
-[Collection("Console Tests")]
+[Collection(CONSOLE)]
 public class ExtendedConsoleTests
 {
   [Fact]
   public async Task ExtendedConsole_when_async_waiting()
   {
     // Arrange
-    using var output = new StringWriter();
-    Console.SetOut(output);
+    Console.SetOut(SharedConsoleOut);
 
     // Act
     _ = ExtendedConsole.StartWait(
@@ -22,7 +21,7 @@ public class ExtendedConsoleTests
       "Wait completed!");
 
     // Assert
-    var result = output
+    var result = SharedConsoleOut
       .ToString();
 
     result
@@ -32,5 +31,7 @@ public class ExtendedConsoleTests
       .StartWith("Waiting for half a second...")
       .And
       .EndWith($"Wait completed!{Environment.NewLine}");
+
+    ResetConsoleOut();
   }
 }
