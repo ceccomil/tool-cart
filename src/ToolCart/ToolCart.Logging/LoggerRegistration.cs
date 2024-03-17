@@ -10,13 +10,17 @@ public static class LoggerRegistration
   private static Recipients GetRecipients(
     this IServiceProvider sp)
   {
-    var config = sp
-      .GetRequiredService<IConfiguration>();
-
     var recipients = Recipients.File;
 
-    if (config.ParameterlessArgCommandFound(
-      ALLOWCONSOLE))
+    var config = sp
+      .GetService<IConfiguration>();
+
+    if (config is null)
+    {
+      return recipients;
+    }
+
+    if (config.SwitchIsOn(ALLOWCONSOLE))
     {
       recipients |= Recipients.Console;
     }

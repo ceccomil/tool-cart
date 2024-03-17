@@ -6,16 +6,13 @@ internal interface IAppOrchestrator : IHostedService
 }
 
 internal sealed class AppOrchestrator(
-  IHostApplicationLifetime _appLifetime,
+  IAppHandler _appHandler,
   IServiceProvider _serviceProvider)
   : IAppOrchestrator
 {
   private readonly ILogger? _logger =
     _serviceProvider
     .GetService<ILogger<AppOrchestrator>>();
-
-  private readonly CancellationToken _stoppingToken =
-    _appLifetime.ApplicationStopping;
 
   public Guid ExecutionId { get; private set; }
 
@@ -72,20 +69,23 @@ internal sealed class AppOrchestrator(
         "The executor service is not found!",
          null);
 
-      _appLifetime.StopApplication();
+      _appHandler.Exit(
+        ErrorCode.MissingRequirements);
 
       return;
     }
 
     await executor.MainTask(
-      _stoppingToken);
+      _appHandler.StoppingToken);
   }
 
   private async Task Run()
   {
     var consecutiveFailures = 0;
 
-    while (!_stoppingToken.IsCancellationRequested &&
+    while (!_appHandler
+      .StoppingToken
+      .IsCancellationRequested &&
       consecutiveFailures <= 5)
     {
       ExecutionId = Guid.NewGuid();
@@ -126,8 +126,8 @@ internal sealed class AppOrchestrator(
           "due to consecutive failures!",
           null);
 
-        Environment.ExitCode = 1;
-        _appLifetime.StopApplication();
+        _appHandler.Exit(
+          ErrorCode.ConsecutiveFailures);
       }
 
       executionScope.Dispose();
@@ -160,9 +160,11 @@ internal sealed class AppOrchestrator(
         cancellationToken);
     }
 
-    if (!_stoppingToken.IsCancellationRequested)
+    if (!_appHandler
+      .StoppingToken
+      .IsCancellationRequested)
     {
-      _appLifetime.StopApplication();
+      _appHandler.Exit();
     }
 
     AppendInfoLog(

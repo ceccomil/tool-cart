@@ -42,6 +42,7 @@ public sealed class HostRunner
   {
     _builder
       .Services
+      .AddSingleton<IAppHandler, AppHandler>()
       .AddSingleton<IAppOrchestrator, AppOrchestrator>()
       .AddHostedService(x => x
         .GetRequiredService<IAppOrchestrator>());

@@ -1,12 +1,10 @@
-﻿using System.Reflection;
+﻿namespace ToolCart.Tests.Services;
 
-namespace ToolCart.Tests.Services;
-
-[Collection("AppOrchestratorTests")]
+[Collection("AppOrchestrator Tests")]
 public class AppOrchestratorTests
 {
-  private readonly IHostApplicationLifetime _appLifetime = Substitute
-    .For<IHostApplicationLifetime>();
+  private readonly IAppHandler _appHandler = Substitute
+    .For<IAppHandler>();
 
   private readonly ILogger<AppOrchestrator> _logger = Substitute
     .For<ILogger<AppOrchestrator>>();
@@ -18,17 +16,17 @@ public class AppOrchestratorTests
     var cts = new CancellationTokenSource();
     cts.Cancel();
 
-    _appLifetime
-      .ApplicationStopping
+    _appHandler
+      .StoppingToken
       .Returns(cts.Token);
 
     var sp = new ServiceCollection()
-      .AddSingleton(_appLifetime)
+      .AddSingleton(_appHandler)
       .AddSingleton(_logger)
       .BuildServiceProvider();
 
     var sut = new AppOrchestrator(
-      _appLifetime,
+      _appHandler,
       sp);
 
     // Act
@@ -51,7 +49,7 @@ public class AppOrchestratorTests
   {
     // Arrange
     var sut = new AppOrchestrator(
-      _appLifetime,
+      _appHandler,
       Substitute.For<IServiceProvider>());
 
     var cts = new CancellationTokenSource();
@@ -72,24 +70,17 @@ public class AppOrchestratorTests
   {
     // Arrange
     var sp = new ServiceCollection()
-      .AddSingleton(_appLifetime)
+      .AddSingleton(_appHandler)
       .AddSingleton(_logger)
       .BuildServiceProvider();
 
     var sut = new AppOrchestrator(
-      _appLifetime,
+      _appHandler,
       sp);
-
-    var cts = new CancellationTokenSource();
-    cts.Cancel();
-
-    _appLifetime
-    .ApplicationStopping
-    .Returns(cts.Token);
 
     // Act
     await sut.StopAsync(CancellationToken
-    .None);
+      .None);
 
     // Assert
     _logger
@@ -101,9 +92,9 @@ public class AppOrchestratorTests
       Arg.Any<Exception>(),
       Arg.Any<Func<object?, Exception?, string>>());
 
-    _appLifetime
+    _appHandler
       .Received(1)
-      .StopApplication();
+      .Exit();
   }
 
   [Fact]
@@ -111,7 +102,7 @@ public class AppOrchestratorTests
   {
     // Arrange
     var sut = new AppOrchestrator(
-      _appLifetime,
+      _appHandler,
       Substitute.For<IServiceProvider>());
 
     var cts = new CancellationTokenSource();
@@ -139,18 +130,18 @@ public class AppOrchestratorTests
 
     var sp = new ServiceCollection()
       .AddSingleton(cts)
-      .AddSingleton(_appLifetime)
+      .AddSingleton(_appHandler)
       .AddSingleton(_logger)
       .AddSingleton<IExecutor, TestExecutor>()
       .AddSingleton(new Thrower(throwEx))
       .BuildServiceProvider();
 
-    _appLifetime
-      .ApplicationStopping
+    _appHandler
+      .StoppingToken
       .Returns(cts.Token);
 
     var sut = new AppOrchestrator(
-      _appLifetime,
+      _appHandler,
       sp);
 
     var mi = sut

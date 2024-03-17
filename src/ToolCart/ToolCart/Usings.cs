@@ -6,6 +6,7 @@ global using System.Reflection;
 global using System.Text;
 global using ToolCart.Configuration;
 global using ToolCart.ConsoleHelpers;
+global using ToolCart.Foundation;
 global using ToolCart.Services;
 
 [assembly: System
