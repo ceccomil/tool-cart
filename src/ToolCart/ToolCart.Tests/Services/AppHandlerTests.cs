@@ -66,6 +66,15 @@ public class AppHandlerTests
         null,
         Arg.Any<Func<object, Exception?, string>>());
 
+    _appLifetime
+      .Received(1)
+      .StopApplication();
+
+    Environment
+      .ExitCode
+      .Should()
+      .Be((int)error);
+
     Environment.ExitCode = 0;
   }
 }
