@@ -16,6 +16,8 @@ internal sealed class TestDiDisposable(
     ExtendedConsole.WriteInfo(
       "TestDiDisposable is disposed!",
       isAlert: true);
+
+    GC.SuppressFinalize(this);
   }
 
   public void Test()
