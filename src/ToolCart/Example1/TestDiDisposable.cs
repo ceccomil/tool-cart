@@ -6,7 +6,7 @@ public interface ITestDiDisposable : IDisposable
 }
 
 internal sealed class TestDiDisposable(
-  IHostApplicationLifetime _appLifetime,
+  IAppHandler _appHandler,
   ICaptainLogger<TestDiDisposable> _logger) : ITestDiDisposable
 {
   private readonly Random _rng = new();
@@ -33,7 +33,13 @@ internal sealed class TestDiDisposable(
 
     if (v == 0)
     {
-      _appLifetime.StopApplication();
+      _appHandler.Exit();
+    }
+
+    if (v == 1)
+    {
+      _appHandler.Exit(
+        ErrorCode.CriticalError);
     }
   }
 }
