@@ -12,12 +12,22 @@ public static partial class ExtendedConsole
   /// Tries to set the cursor position.
   /// </summary>
   public static bool TryRepositioning(
-    string mex)
+    string mex,
+    bool avoidBlanks = false) => TryRepositioning(
+      mex.Length,
+      avoidBlanks);
+
+  /// <summary>
+  /// Tries to set the cursor position.
+  /// </summary>
+  public static bool TryRepositioning(
+    int len,
+    bool avoidBlanks = false)
   {
     try
     {
       var left = Console
-        .CursorLeft - mex.Length;
+        .CursorLeft - len;
 
       if (left < 0)
       {
@@ -28,8 +38,13 @@ public static partial class ExtendedConsole
         left,
         Console.CursorTop);
 
+      if (avoidBlanks)
+      {
+        return true;
+      }
+
       Console.Write(
-        GetBlanks(mex.Length));
+        GetBlanks(len));
 
       Console.SetCursorPosition(
         left,
