@@ -49,7 +49,8 @@ public class ExitingApplicationAnalyzer : DiagnosticAnalyzer
           x.Identifier.Text == RuleIds.ENV) &&
           x.Parent is not null)
         .Select(x => x.Parent)
-        .Where(x => $"{x}".StartsWith(RuleIds.ENV))
+        .Where(x => $"{x}".StartsWith(RuleIds.ENV) &&
+          $"{x}".Contains(RuleIds.EXIT))
         .Distinct()
         .ToList();
 

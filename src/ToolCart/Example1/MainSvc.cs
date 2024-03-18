@@ -12,8 +12,12 @@ internal sealed class MainSvc(
 
     _testSvc.Test();
 
-    ExtendedConsole.WriteWarning(
-      "The main task is completed!",
-      isAlert: true);
+    var end = $"_d_Date: _au_{DateTime.UtcNow:dd/MM/yyyy}" +
+      $"_d_ Time: _au_{DateTime.UtcNow:HH:mm:ss}";
+
+    ExtendedConsole.WriteMixed(
+      "_i_The main task is completed!" +
+      Environment.NewLine +
+      end);
   }
 }

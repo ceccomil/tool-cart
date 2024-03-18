@@ -92,6 +92,8 @@ public class ConsoleUseAnalyzerTests
         {
           _hostLifeTime = hostLifeTime;
           _lifeTime = lifeTime;
+
+          var test = Environment.NewLine;
         }
 
         public void Dispose()
