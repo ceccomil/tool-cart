@@ -69,4 +69,60 @@ public class ConsoleUseAnalyzerTests
       .Should()
       .HaveCount(2);
   }
+
+  [Fact]
+  public async Task ExitingApplicationAnalyzer_when_raise_warnings()
+  {
+    // Arrange
+    var program =
+      """
+      public interface ITestSvc : IDisposable
+      {
+        void Test();
+      }
+
+      internal sealed class TestSvc : ITestSvc
+      {
+        private readonly IHostApplicationLifetime _hostLifeTime;
+        private readonly IApplicationLifetime _lifeTime;
+
+        public TestSvc(
+          IHostApplicationLifetime hostLifeTime,
+          IHostApplicationLifetime lifeTime)
+        {
+          _hostLifeTime = hostLifeTime;
+          _lifeTime = lifeTime;
+        }
+
+        public void Dispose()
+        {
+          Environment.ExitCode = 10;
+          Environment.Exit(0);
+          GC.SuppressFinalize(this);
+        }
+
+        public void Test()
+        {
+          _hostLifeTime.StopApplication();
+        }
+      }
+      """;
+
+    ImmutableArray<DiagnosticAnalyzer> auts =
+    [
+      new ExitingApplicationAnalyzer()
+    ];
+
+    var compilation = CreateCompilation(program);
+
+    // Act
+    var diagnostics = await compilation
+      .WithAnalyzers(auts)
+      .GetAnalyzerDiagnosticsAsync();
+
+    // Assert
+    diagnostics
+      .Should()
+      .HaveCount(6);
+  }
 }

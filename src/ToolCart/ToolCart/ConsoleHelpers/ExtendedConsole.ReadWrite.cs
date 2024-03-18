@@ -2,43 +2,43 @@
 
 public static partial class ExtendedConsole
 {
-  private static Theme Question { get; set; } = new(
+  internal static Theme Question { get; private set; } = new(
     ConsoleColor.Cyan,
     ConsoleColor.Black);
 
-  private static Theme AlertQuestion { get; set; } = new(
+  internal static Theme AlertQuestion { get; private set; } = new(
     ConsoleColor.Black,
     ConsoleColor.Cyan);
 
-  private static Theme UserInput { get; set; } = new(
+  internal static Theme UserInput { get; private set; } = new(
     ConsoleColor.Magenta,
     ConsoleColor.Black);
 
-  private static Theme AlertUserInput { get; set; } = new(
+  internal static Theme AlertUserInput { get; private set; } = new(
     ConsoleColor.Black,
     ConsoleColor.Magenta);
 
-  private static Theme Info { get; set; } = new(
+  internal static Theme Info { get; private set; } = new(
      ConsoleColor.Green,
      ConsoleColor.Black);
 
-  private static Theme AlertInfo { get; set; } = new(
+  internal static Theme AlertInfo { get; private set; } = new(
     ConsoleColor.Black,
     ConsoleColor.Green);
 
-  private static Theme Warning { get; set; } = new(
+  internal static Theme Warning { get; private set; } = new(
      ConsoleColor.Yellow,
      ConsoleColor.Black);
 
-  private static Theme AlertWarning { get; set; } = new(
+  internal static Theme AlertWarning { get; private set; } = new(
     ConsoleColor.Black,
     ConsoleColor.Yellow);
 
-  private static Theme Error { get; set; } = new(
+  internal static Theme Error { get; private set; } = new(
      ConsoleColor.Red,
      ConsoleColor.Black);
 
-  private static Theme AlertError { get; set; } = new(
+  internal static Theme AlertError { get; private set; } = new(
     ConsoleColor.Black,
     ConsoleColor.Red);
 
@@ -215,6 +215,33 @@ public static partial class ExtendedConsole
       error,
       theme,
       appendNewLine);
+  }
+
+  /// <summary>
+  /// Write a mixed color message to the console.
+  /// To change colors within the message, 
+  /// use the following tags:
+  /// <para>_i_ (info), _w_ (warning), _e_ (error), 
+  /// _q_ (question), _u_ (user input)</para>
+  /// <para>Add "a" to a tag to make it an alert.</para>
+  /// e.g. "_q_Is this an _ae_error message _q_?"
+  /// </summary>
+  public static void WriteMixed(
+    string taggedText,
+    bool appendNewLine = true)
+  {
+    var texts = taggedText
+      .SplitIntoThemes();
+
+    foreach (var t in texts)
+    {
+      Write(t.Text.ToString(), t.Theme);
+    }
+
+    if (appendNewLine)
+    {
+      Write(Environment.NewLine);
+    }
   }
 
   /// <summary>

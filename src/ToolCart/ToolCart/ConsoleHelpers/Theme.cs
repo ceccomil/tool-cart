@@ -16,4 +16,11 @@ public record Theme(
   /// Gets the console's background color before the theme was applied.
   /// </summary>
   public ConsoleColor BeforeBackground { get; } = Console.BackgroundColor;
+
+  /// <summary>
+  /// <inheritdoc />
+  /// </summary>
+  public override string ToString() =>
+    $"Foreground: {Foreground}, " +
+    $"Background: {Background}";
 }

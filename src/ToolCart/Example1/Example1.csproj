@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ToolCart.Logging\ToolCart.Logging.csproj" />
+    <ProjectReference Include="..\ToolCart.UsageAnalyzer\ToolCart.UsageAnalyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="All" />
     <ProjectReference Include="..\ToolCart\ToolCart.csproj" />
   </ItemGroup>
 

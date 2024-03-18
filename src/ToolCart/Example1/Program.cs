@@ -8,7 +8,6 @@ global using ToolCart.Host;
 global using ToolCart.Logging;
 global using ToolCart.Services;
 
-
 var hostRunner = new HostRunner()
 {
   ServicesConfig = services =>
