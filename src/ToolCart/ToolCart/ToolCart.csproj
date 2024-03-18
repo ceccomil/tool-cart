@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ToolCart.Foundation\ToolCart.Foundation.csproj" />
+    <ProjectReference Include="..\ToolCart.UsageAnalyzer\ToolCart.UsageAnalyzer.csproj" />
   </ItemGroup>
   
 </Project>
