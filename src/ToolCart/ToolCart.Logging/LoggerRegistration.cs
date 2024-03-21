@@ -67,7 +67,7 @@ public static class LoggerRegistration
     services
       .Configure<CaptainLoggerOptions>(opts =>
       {
-        opts.DefaultColor = ConsoleColor.DarkGray;
+        opts.DefaultColor = ConsoleColor.White;
         opts.LogRecipients = recipients;
         opts.FileRotation = LogRotation.Day;
         opts.TimeIsUtc = true;
