@@ -5,10 +5,9 @@ public class ExitingApplicationAnalyzer : DiagnosticAnalyzer
 {
   public override ImmutableArray<
     DiagnosticDescriptor> SupportedDiagnostics =>
-    [
+    ImmutableArray.Create(
       RuleIds.AppLifetimeUse,
-      RuleIds.EnvExitsUse
-    ];
+      RuleIds.EnvExitsUse);
 
   private void RaiseAppLifetimeUse(
     SyntaxTreeAnalysisContext ctx)

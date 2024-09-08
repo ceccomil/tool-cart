@@ -5,9 +5,7 @@ public class ConsoleUseAnalyzer : DiagnosticAnalyzer
 {
   public override ImmutableArray<
     DiagnosticDescriptor> SupportedDiagnostics =>
-    [
-      RuleIds.ConsoleUse
-    ];
+      ImmutableArray.Create(RuleIds.ConsoleUse);
 
   private void RaiseConsoleUseWarning(
     SyntaxTreeAnalysisContext ctx)
