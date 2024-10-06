@@ -15,7 +15,7 @@ internal static class RuleIds
     $"{nameof(System)}.{nameof(Console)}";
 
   public const string EXT_CONSOLE =
-    "ToolCart.Services.ExtendedConsole";
+    "ToolCart.Abstractions.IConsoleWrapper";
 
   public const string ENV = $"{nameof(Environment)}";
 

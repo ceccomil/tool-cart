@@ -1,6 +1,6 @@
 ﻿namespace ToolCart.ConsoleHelpers;
 
-public static partial class ExtendedConsole
+internal static partial class ExtendedConsole
 {
   internal static Theme Question { get; private set; } = new(
     ConsoleColor.Cyan,

@@ -2,7 +2,7 @@
 global using Example1;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
-global using ToolCart.ConsoleHelpers;
+global using ToolCart.Abstractions;
 global using ToolCart.Foundation;
 global using ToolCart.Host;
 global using ToolCart.Logging;
