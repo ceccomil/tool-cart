@@ -1,6 +1,6 @@
 ﻿namespace ToolCart.ConsoleHelpers;
 
-public static partial class ExtendedConsole
+internal static partial class ExtendedConsole
 {
   private static CancellationTokenSource _waitCts = new();
   private static string _waitMessage = string.Empty;

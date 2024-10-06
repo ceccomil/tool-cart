@@ -7,15 +7,16 @@ public interface ITestDiDisposable : IDisposable
 
 internal sealed class TestDiDisposable(
   IAppHandler _appHandler,
+  IConsoleWrapper _console,
   ICaptainLogger<TestDiDisposable> _logger) : ITestDiDisposable
 {
   private readonly Random _rng = new();
 
   public void Dispose()
   {
-    ExtendedConsole.WriteLine();
+    _console.WriteLine();
 
-    ExtendedConsole.WriteMixed(
+    _console.WriteMixed(
       "TestDiDisposable is _au_disposed_d_!");
 
     GC.SuppressFinalize(this);
@@ -25,12 +26,12 @@ internal sealed class TestDiDisposable(
   {
     _logger.TraceLog("Test method is called!");
 
-    ExtendedConsole.WriteInfo(
+    _console.WriteInfo(
       $"Random: {_rng.GetHashCode()}");
 
     var v = _rng.Next(0, 4);
 
-    ExtendedConsole.WriteInfo(
+    _console.WriteInfo(
       $"Random value: {v}",
       isAlert: true);
 

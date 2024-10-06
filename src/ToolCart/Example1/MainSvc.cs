@@ -2,7 +2,8 @@
 
 internal sealed class MainSvc(
   ITestDiDisposable _testSvc,
-  ICaptainLogger<MainSvc> _logger) : IExecutor
+  ICaptainLogger<MainSvc> _logger,
+  IConsoleWrapper _console) : IExecutor
 {
   public async Task MainTask(CancellationToken cancellationToken)
   {
@@ -15,7 +16,7 @@ internal sealed class MainSvc(
     var end = $"_d_Date: _au_{DateTime.UtcNow:dd/MM/yyyy}" +
       $"_d_ Time: _au_{DateTime.UtcNow:HH:mm:ss}";
 
-    ExtendedConsole.WriteMixed(
+    _console.WriteMixed(
       "_i_The main task is completed!" +
       Environment.NewLine +
       end);

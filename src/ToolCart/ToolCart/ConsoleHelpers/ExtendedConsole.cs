@@ -3,7 +3,7 @@
 /// <summary>
 /// Provides methods to extend the <see cref="Console"/> class.
 /// </summary>
-public static partial class ExtendedConsole
+internal static partial class ExtendedConsole
 {
   private static string GetBlanks(
     int length) => new(' ', length);
