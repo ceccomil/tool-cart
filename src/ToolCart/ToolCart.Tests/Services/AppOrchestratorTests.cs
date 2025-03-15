@@ -61,8 +61,7 @@ public class AppOrchestratorTests
     // Assert
     task
       .Status
-      .Should()
-      .Be(TaskStatus.Canceled);
+      .ShouldBe(TaskStatus.Canceled);
   }
 
   [Fact]
@@ -114,8 +113,7 @@ public class AppOrchestratorTests
     // Assert
     task
       .Status
-      .Should()
-      .Be(TaskStatus.Canceled);
+      .ShouldBe(TaskStatus.Canceled);
   }
 
   [Theory]
@@ -164,8 +162,7 @@ public class AppOrchestratorTests
       .ToList();
 
     (errors.Count > 0)
-      .Should()
-      .Be(expected);
+      .ShouldBe(expected);
   }
 }
 

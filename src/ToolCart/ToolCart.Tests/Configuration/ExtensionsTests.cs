@@ -75,7 +75,6 @@ public class ExtensionsTests
 
     // Assert
     toolName
-      .Should()
-      .Be("XUnit Test Project");
+      .ShouldBe("XUnit Test Project");
   }
 }

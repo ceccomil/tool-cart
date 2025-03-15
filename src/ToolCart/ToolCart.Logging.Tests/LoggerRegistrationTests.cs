@@ -25,8 +25,7 @@ public class LoggerRegistrationTests
     options
       .Value
       .Rules
-      .Should()
-      .BeEmpty();
+      .ShouldBeEmpty();
   }
 
   [Fact]
@@ -57,13 +56,11 @@ public class LoggerRegistrationTests
     // Assert
     filter
       .CategoryName
-      .Should()
-      .Be("ACategory");
+      .ShouldBe("ACategory");
 
     filter
       .LogLevel
-      .Should()
-      .Be(LogLevel.Critical);
+      .ShouldBe(LogLevel.Critical);
   }
 
   [Theory]
@@ -98,7 +95,6 @@ public class LoggerRegistrationTests
     // Assert
     options
       .LogRecipients
-      .Should()
-      .Be(expected);
+      .ShouldBe(expected);
   }
 }

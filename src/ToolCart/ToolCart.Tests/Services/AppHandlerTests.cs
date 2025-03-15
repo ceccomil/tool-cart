@@ -72,8 +72,7 @@ public class AppHandlerTests
 
     Environment
       .ExitCode
-      .Should()
-      .Be((int)error);
+      .ShouldBe((int)error);
 
     Environment.ExitCode = 0;
   }

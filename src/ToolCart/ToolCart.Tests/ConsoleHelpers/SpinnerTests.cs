@@ -23,8 +23,7 @@ public class SpinnerTests
     // Assert
     SharedConsoleOut
       .ToString()
-      .Should()
-      .Be("-\b\\\b|\b/\b-\b");
+      .ShouldBe("-\b\\\b|\b/\b-\b");
 
     ResetConsoleOut();
   }
@@ -44,15 +43,13 @@ public class SpinnerTests
 
     // Assert
     await act
-      .Should()
-      .ThrowAsync<TaskCanceledException>();
+      .ShouldThrowAsync<TaskCanceledException>();
 
     Spinner.Reset();
 
     SharedConsoleOut
       .ToString()
-      .Should()
-      .Be("-\b");
+      .ShouldBe("-\b");
 
     ResetConsoleOut();
   }

@@ -34,11 +34,9 @@ public class StringExtensionsTests
     // Assert
     list
       .Count
-      .Should()
-      .Be(splits);
+      .ShouldBe(splits);
 
     result
-      .Should()
-      .Be(expected);
+      .ShouldBe(expected);
   }
 }

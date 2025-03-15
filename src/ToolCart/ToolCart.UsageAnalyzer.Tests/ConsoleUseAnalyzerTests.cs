@@ -66,8 +66,8 @@ public class ConsoleUseAnalyzerTests
 
     // Assert
     diagnostics
-      .Should()
-      .HaveCount(2);
+      .Count()
+      .ShouldBe(2);
   }
 
   [Fact]
@@ -124,7 +124,7 @@ public class ConsoleUseAnalyzerTests
 
     // Assert
     diagnostics
-      .Should()
-      .HaveCount(6);
+      .Count()
+      .ShouldBe(6);
   }
 }

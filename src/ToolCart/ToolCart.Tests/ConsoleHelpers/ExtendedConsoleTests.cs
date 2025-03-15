@@ -25,12 +25,14 @@ public class ExtendedConsoleTests
       .ToString();
 
     result
-      .Should()
-      .Contain("\b")
-      .And
-      .StartWith("Waiting for half a second...")
-      .And
-      .EndWith($"Wait completed!{Environment.NewLine}");
+      .ShouldContain("\b");
+
+    result
+      .ShouldStartWith("Waiting for half a second...");
+
+
+    result
+      .ShouldEndWith($"Wait completed!{Environment.NewLine}");
 
     ResetConsoleOut();
   }
