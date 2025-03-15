@@ -32,8 +32,7 @@ public class HostRunnerTests
 
     // Assert
     CustomExitCode
-      .Should()
-      .Be(exitCode);
+      .ShouldBe(exitCode);
   }
 }
 
