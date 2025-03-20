@@ -20,5 +20,12 @@ internal sealed class MainSvc(
       "_i_The main task is completed!" +
       Environment.NewLine +
       end);
+
+    _console.WriteQuestion("Please check read password by typing something!");
+
+    var pwd = _console.ReadPasswordFromUser();
+
+    _console.WriteMixed(
+      $"_i_You typed: _au_{pwd}");
   }
 }

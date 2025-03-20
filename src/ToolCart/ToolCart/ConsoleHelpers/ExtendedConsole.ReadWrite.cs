@@ -338,4 +338,35 @@ internal static partial class ExtendedConsole
 
     return ReadLine(theme);
   }
+
+  /// <summary>
+  /// Reads the next line of characters from the standard input stream without echoing the characters to the console.
+  /// </summary>
+  public static string ReadPasswordFromUser()
+  {
+    var password = "";
+
+    while (true)
+    {
+      var key = Console.ReadKey(intercept: true);
+      if (key.Key == ConsoleKey.Enter)
+      {
+        break;
+      }
+
+      if (key.Key == ConsoleKey.Backspace)
+      {
+        if (password.Length > 0)
+        {
+          password = password[..^1];
+        }
+
+        continue;
+      }
+
+      password += key.KeyChar;
+    }
+
+    return password;
+  }
 }
