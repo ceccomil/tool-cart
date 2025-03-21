@@ -141,6 +141,11 @@ public interface IConsoleWrapper
     bool isAlert = false);
 
   /// <summary>
+  /// Reads a password from the user.
+  /// </summary>
+  string ReadPasswordFromUser();
+
+  /// <summary>
   /// Starts a wait with a message.
   /// </summary>
   Task StartWait(
@@ -177,6 +182,9 @@ internal sealed class ConsoleWrapper
   public string ReadLineFromUser(
     bool isAlert = false) => ExtendedConsole
       .ReadLineFromUser(isAlert);
+
+  public string ReadPasswordFromUser() => ExtendedConsole
+    .ReadPasswordFromUser();
 
   public void SetCustomThemes(
     Theme question,
