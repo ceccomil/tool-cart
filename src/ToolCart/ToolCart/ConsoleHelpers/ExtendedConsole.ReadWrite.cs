@@ -2,7 +2,13 @@
 
 internal static partial class ExtendedConsole
 {
-  internal static Theme Question { get; private set; } = new(
+#if NET9_0_OR_GREATER
+  private static readonly Lock _consoleLock = new();
+#else
+  private static readonly object _consoleLock = new();
+#endif
+
+internal static Theme Question { get; private set; } = new(
     ConsoleColor.Cyan,
     ConsoleColor.Black);
 
@@ -83,17 +89,20 @@ internal static partial class ExtendedConsole
     string mex,
     Theme? theme = default)
   {
-    theme ??= new(
+    lock (_consoleLock)
+    {
+      theme ??= new(
       Console.ForegroundColor,
       Console.BackgroundColor);
 
-    Console.ForegroundColor = theme.Foreground;
-    Console.BackgroundColor = theme.Background;
+      Console.ForegroundColor = theme.Foreground;
+      Console.BackgroundColor = theme.Background;
 
-    Console.Write(mex);
+      Console.Write(mex);
 
-    Console.ForegroundColor = theme.BeforeForeground;
-    Console.BackgroundColor = theme.BeforeBackground;
+      Console.ForegroundColor = theme.BeforeForeground;
+      Console.BackgroundColor = theme.BeforeBackground;
+    }
   }
 
   /// <summary>
@@ -225,6 +234,7 @@ internal static partial class ExtendedConsole
   /// _q_ (question), _u_ (user input)</para>
   /// <para>Add "a" to a tag to make it an alert.</para>
   /// e.g. "_q_Is this an _ae_error message _q_?"
+  /// <para>Use _d_ to change back to default color</para>
   /// </summary>
   public static void WriteMixed(
     string taggedText,

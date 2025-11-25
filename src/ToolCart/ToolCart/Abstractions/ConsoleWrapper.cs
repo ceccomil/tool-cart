@@ -101,6 +101,7 @@ public interface IConsoleWrapper
   /// _q_ (question), _u_ (user input)</para>
   /// <para>Add "a" to a tag to make it an alert.</para>
   /// e.g. "_q_Is this an _ae_error message _q_?"
+  /// <para>Use _d_ to change back to default color</para>
   /// </summary>
   void WriteMixed(
     string taggedText,

@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Authors>Chekko Milani</Authors>
     <Company>Chekko Milani</Company>
-    <PackageVersion>1.1.0-beta-2.0</PackageVersion>
+    <VersionPrefix>1.2.0</VersionPrefix>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -16,4 +16,12 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
   </PropertyGroup>
+
+  <!-- Debug-only packing -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <VersionSuffix>dev-10</VersionSuffix>
+
+    <PackageOutputPath>$(MSBuildProjectDirectory)/../../PackageOutput</PackageOutputPath>
+  </PropertyGroup>
+  
 </Project>

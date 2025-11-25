@@ -7,6 +7,8 @@ public sealed class HostRunner
 {
   private readonly HostApplicationBuilder _builder = new();
 
+  private IHost? _app;
+
   /// <summary>
   /// Configure the application builder.
   /// </summary>
@@ -29,13 +31,10 @@ public sealed class HostRunner
       .AddArgsConfiguration(args)
       .AddAppSettingsConfiguration();
 
-    if (AppBuilderConfig is null)
+    if (AppBuilderConfig is not null)
     {
-      return;
+      await AppBuilderConfig.Invoke(_builder);
     }
-
-    await AppBuilderConfig
-      .Invoke(_builder);
   }
 
   private async Task RegisterServices()
@@ -48,38 +47,40 @@ public sealed class HostRunner
       .AddHostedService(x => x
         .GetRequiredService<IAppOrchestrator>());
 
-    if (ServicesConfig is null)
+    if (ServicesConfig is not null)
     {
-      return;
+      await ServicesConfig.Invoke(_builder.Services);
     }
-
-    await ServicesConfig
-      .Invoke(_builder.Services);
   }
 
   private async Task Initialization(
-    string startupMessage,
     string[]? args)
   {
-    _ = ExtendedConsole.StartWait($"{startupMessage}...");
-
     await ConfigureAppBuilder(args);
-
     await RegisterServices();
   }
 
-  private async Task AppBuildAndRun()
+  private async Task AppBuild()
   {
-    using var app = _builder.Build();
+    _app = _builder.Build();
 
     if (AppConfig is not null)
     {
-      await AppConfig.Invoke(app);
+      await AppConfig.Invoke(_app);
     }
+  }
 
-    await ExtendedConsole.StopWait();
-
-    await app.RunAsync();
+  private async Task AppRun()
+  {
+    if (_app is null)
+    {
+      throw new InvalidOperationException(
+        "Host has not been built.");
+    }
+    using (_app)
+    {
+      await _app.RunAsync();
+    }  
   }
 
   /// <summary>
@@ -93,14 +94,24 @@ public sealed class HostRunner
   {
     ExtendedConsole.TrySetCursorVisibility(false);
 
-    await Initialization(startupMessage, args);
+    try
+    {
+      _ = ExtendedConsole.StartWait($"{startupMessage}...");
 
-    _builder
-      .Services
-      .AddScoped(typeof(IExecutor), typeof(TMainService));
+      await Initialization(args);
 
-    await AppBuildAndRun();
+      _builder
+        .Services
+        .AddScoped<IExecutor, TMainService>();
 
-    ExtendedConsole.TrySetCursorVisibility(true);
+      await AppBuild();
+      await ExtendedConsole.StopWait();
+
+      await AppRun();
+    }
+    finally
+    {
+      ExtendedConsole.TrySetCursorVisibility(true);
+    }
   }
 }
