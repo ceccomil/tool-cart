@@ -1,7 +1,4 @@
-﻿using CaptainLogger.Options;
-using Microsoft.Extensions.Configuration;
-
-namespace ToolCart.Logging.Tests;
+﻿namespace ToolCart.Logging.Tests;
 
 [Collection("LoggerRegistration Tests")]
 public class LoggerRegistrationTests
