@@ -26,6 +26,11 @@ jobs:
         nuget-api-key: ${{ secrets.CECCOMIL_NUGET }}
         nuget-version: '6.x'
 
+    - name: Setup .NET8
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 8.0.x
+
     - name: Setup .NET10
       uses: actions/setup-dotnet@v1
       with:
