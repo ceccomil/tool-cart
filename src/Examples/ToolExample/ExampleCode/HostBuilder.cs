@@ -1,6 +1,6 @@
 ﻿global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
-global using ToolCart.Abstractions;
+global using ToolCart.Foundation;
 global using ToolCart.Host;
 global using ToolCart.Logging;
 global using ToolCart.Services;
@@ -20,6 +20,7 @@ public static class HostBuilder
           .Configure<LoggerFilters>(opts =>
           {
             opts.Add(new("ToolExample", LogLevel.Debug));
+            opts.Add(new("ToolCart", LogLevel.Trace));
             opts.Add(new("", LogLevel.Error));
           })
           .AddDefaultLogger();

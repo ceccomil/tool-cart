@@ -1,25 +1,16 @@
 ﻿namespace ToolCart.ConsoleHelpers;
 
-/// <summary>
-/// Provides methods to extend the <see cref="Console"/> class.
-/// </summary>
 internal static partial class ExtendedConsole
 {
   private static string GetBlanks(
     int length) => new(' ', length);
 
-  /// <summary>
-  /// Tries to set the cursor position.
-  /// </summary>
   public static bool TryRepositioning(
     string mex,
     bool avoidBlanks = false) => TryRepositioning(
       mex.Length,
       avoidBlanks);
 
-  /// <summary>
-  /// Tries to set the cursor position.
-  /// </summary>
   public static bool TryRepositioning(
     int len,
     bool avoidBlanks = false)
@@ -64,9 +55,6 @@ internal static partial class ExtendedConsole
     }
   }
 
-  /// <summary>
-  /// Tries to set the cursor visibility.
-  /// </summary>
   public static bool TrySetCursorVisibility(
     bool visible)
   {
@@ -81,9 +69,6 @@ internal static partial class ExtendedConsole
     }
   }
 
-  /// <summary>
-  /// Deletes the last character, and move the cursor back.
-  /// </summary>
   public static void DeleteLastChar()
   {
     var backspace = "\b";

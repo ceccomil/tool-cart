@@ -7,9 +7,6 @@ internal static partial class ExtendedConsole
   private static bool _isWaiting = false;
   private static Theme _waitTheme = null!;
 
-  /// <summary>
-  /// Starts a wait with a message.
-  /// </summary>
   public static async Task StartWait(
     string mex,
     Theme? theme = default)
@@ -47,9 +44,6 @@ internal static partial class ExtendedConsole
     }
   }
 
-  /// <summary>
-  /// Stops the wait.
-  /// </summary>
   public static Task StopWait()
   {
     if (!_isWaiting)
