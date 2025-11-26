@@ -1,9 +1,9 @@
-﻿namespace ToolCart.ConsoleHelpers;
+﻿namespace ToolCart.Foundation;
 
 /// <summary>
 /// Represents a color theme.
 /// </summary>
-public record Theme(
+public sealed record Theme(
   ConsoleColor Foreground,
   ConsoleColor Background)
 {

@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ToolCart" Version="1.2.0-dev-8" />
-    <PackageReference Include="ToolCart.Logging" Version="1.2.0-dev-8" />
+    <PackageReference Include="ToolCart" Version="1.2.1-dev-1" />
+    <PackageReference Include="ToolCart.Logging" Version="1.2.1-dev-1" />
   </ItemGroup>
 
 </Project>

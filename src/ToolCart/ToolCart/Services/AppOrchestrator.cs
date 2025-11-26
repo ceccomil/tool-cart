@@ -10,9 +10,15 @@ internal sealed class AppOrchestrator(
   IServiceProvider _serviceProvider)
   : IAppOrchestrator
 {
+  private Task? _executingTask;
+
   private readonly ILogger? _logger =
     _serviceProvider
     .GetService<ILogger<AppOrchestrator>>();
+
+  private readonly IExecutionCorrelationScopeFactory _correlationFactory = _serviceProvider
+    .GetService<IExecutionCorrelationScopeFactory>() ??
+    NullExecutionCorrelationScopeFactory.Instance;
 
   public Guid ExecutionId { get; private set; }
 
@@ -88,7 +94,15 @@ internal sealed class AppOrchestrator(
       .IsCancellationRequested &&
       consecutiveFailures <= 5)
     {
+
+#if NET9_0_OR_GREATER
+      ExecutionId = Guid.CreateVersion7();
+#else
       ExecutionId = Guid.NewGuid();
+#endif
+
+      using var loggerScope = _correlationFactory
+        .BeginScope(ExecutionId);
 
       var executionScope = _serviceProvider
         .CreateScope();
@@ -101,13 +115,19 @@ internal sealed class AppOrchestrator(
       try
       {
         // Small delay to avoid the CPU overloading.
-        await Task.Delay(100);
+        await Task.Delay(100, _appHandler.StoppingToken);
         await ExecMainTask(executionScope);
 
         AppendDebugLog(
         $"Execution: {ExecutionId} is completed.");
 
         consecutiveFailures = 0;
+      }
+      catch (OperationCanceledException) when (_appHandler.StoppingToken.IsCancellationRequested)
+      {
+        // Graceful shutdown: don't count as a failure, just break the loop.
+        AppendDebugLog($"Execution: {ExecutionId} cancelled.");
+        break;
       }
       catch (Exception ex)
       {
@@ -146,18 +166,18 @@ internal sealed class AppOrchestrator(
     AppendInfoLog(
       "The Application is running.");
 
-    _ = Run();
+    _executingTask = Run();
 
     return Task.CompletedTask;
   }
 
-  public Task StopAsync(
+  public async Task StopAsync(
     CancellationToken cancellationToken)
   {
     if (cancellationToken.IsCancellationRequested)
     {
-      return Task.FromCanceled(
-        cancellationToken);
+      await Task.FromCanceled(cancellationToken);
+      return;
     }
 
     if (!_appHandler
@@ -167,10 +187,17 @@ internal sealed class AppOrchestrator(
       _appHandler.Exit();
     }
 
-    AppendInfoLog(
-      "The application has been shut down.");
+    if (_executingTask is null)
+    {
+      AppendInfoLog("The application has been shut down.");
+      return;
+    }
 
-    return Task.CompletedTask;
+    await Task.WhenAny(
+      _executingTask,
+      Task.Delay(Timeout.Infinite, cancellationToken));
+
+    AppendInfoLog("The application has been shut down.");
   }
 }
 
