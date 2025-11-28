@@ -19,6 +19,9 @@ internal sealed class MyToolExecutor(
     _console.WriteMixed(
       "_i_Welcome to _au_MyTool_i_ powered by ToolCart!");
 
+    _console.WriteMixed(
+        @"To make _au_HIGHLIGHT_d_ you need `_au_\_au__d_` tag!");
+
     for (var i = 0; i < 3 && !cancellationToken.IsCancellationRequested; i++)
     {
       _console.WriteQuestion(
@@ -60,6 +63,6 @@ internal sealed class MyToolExecutor(
     _logger.LogError(
       "User input is not valid!");
 
-   _appHandler.Exit(1);
+    _appHandler.Exit(1);
   }
 }

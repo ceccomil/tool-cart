@@ -2,14 +2,7 @@
 
 internal static partial class StringExtensions
 {
-  private static readonly string[] knownTags =
-  [
-    "_i_", "_ai_", "_w_", "_aw_",
-    "_e_", "_ae_", "_q_", "_aq_",
-    "_u_", "_au_", "_d_"
-  ];
-
-  [GeneratedRegex("_[aiweqdu]{1,2}_")]
+  [GeneratedRegex(@"(?<!\\)_[aiweqdu]{1,2}_")]
   private static partial Regex TagRgx();
 
   private static List<Match> ValidateTags(
@@ -19,7 +12,7 @@ internal static partial class StringExtensions
 
     foreach (var match in matches.Cast<Match>())
     {
-      if (!knownTags.Contains(match.Value))
+      if (!KnownTags.Contains(match.Value))
       {
         throw new NotSupportedException(
           $"Invalid tag in the tagged " +
@@ -85,6 +78,11 @@ internal static partial class StringExtensions
     if (currentText.Length > 0)
     {
       themes.Add((currentText, currentTheme));
+    }
+
+    foreach (var (text, _) in themes)
+    {
+      text.Replace("\\_", "_");
     }
 
     return themes;
