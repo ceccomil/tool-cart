@@ -47,6 +47,7 @@ public class ConsoleUseAnalyzerTests
           await new ConsoleWrite("message 1");
           await Task.Delay(1000);
           await new ConsoleWrite("message 2");
+          Console.ForegroundColor = ConsoleColor.Yellow;
           Console.WriteLine("Hello World!");
         }
       }
@@ -66,53 +67,43 @@ public class ConsoleUseAnalyzerTests
 
     // Assert
     diagnostics
-      .Count()
-      .ShouldBe(2);
+      .Length
+      .ShouldBe(3);
   }
 
   [Fact]
-  public async Task ExitingApplicationAnalyzer_when_raise_warnings()
+  public async Task ConsoleUseAnalyzer_when_using_static_raise_warnings()
   {
     // Arrange
     var program =
       """
-      public interface ITestSvc : IDisposable
-      {
-        void Test();
-      }
+      using static System.Console;
 
-      internal sealed class TestSvc : ITestSvc
-      {
-        private readonly IHostApplicationLifetime _hostLifeTime;
-        private readonly IApplicationLifetime _lifeTime;
+      namespace TestNs;
 
-        public TestSvc(
-          IHostApplicationLifetime hostLifeTime,
-          IHostApplicationLifetime lifeTime)
+      public class Program
+      {
+        private static async Task ConsoleWrite(string message)
         {
-          _hostLifeTime = hostLifeTime;
-          _lifeTime = lifeTime;
-
-          var test = Environment.NewLine;
+          WriteLine(message);
+          await Task.CompletedTask;
         }
 
-        public void Dispose()
+        public async Task Main()
         {
-          Environment.ExitCode = 10;
-          Environment.Exit(0);
-          GC.SuppressFinalize(this);
-        }
-
-        public void Test()
-        {
-          _hostLifeTime.StopApplication();
+          await Task.Delay(1000);
+          await ConsoleWrite("message 1");
+          await Task.Delay(1000);
+          await ConsoleWrite("message 2");
+          ForegroundColor = ConsoleColor.Yellow;
+          WriteLine("Hello World!");
         }
       }
       """;
 
     ImmutableArray<DiagnosticAnalyzer> auts =
     [
-      new ExitingApplicationAnalyzer()
+      new ConsoleUseAnalyzer()
     ];
 
     var compilation = CreateCompilation(program);
@@ -124,7 +115,7 @@ public class ConsoleUseAnalyzerTests
 
     // Assert
     diagnostics
-      .Count()
-      .ShouldBe(6);
+      .Length
+      .ShouldBe(3);
   }
 }

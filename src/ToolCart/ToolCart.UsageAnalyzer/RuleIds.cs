@@ -26,6 +26,8 @@ internal static class RuleIds
   public const string CONSOLE_USE = "TC0001";
   public const string APP_LIFETIME = "TC0002";
   public const string ENV_EXITS = "TC0003";
+  public const string INVALID_TAG = "TC0004";
+  public const string UNESCAPED_TAG = "TC0005";
 
   public static readonly DiagnosticDescriptor ConsoleUse = new(
     CONSOLE_USE,
@@ -52,5 +54,22 @@ internal static class RuleIds
     $" rely on {APPHANDLER}",
     "Design",
     DiagnosticSeverity.Warning,
+    isEnabledByDefault: true);
+
+  public static readonly DiagnosticDescriptor InvalidTagRule = new(
+    INVALID_TAG,
+    "Invalid WriteMixed tag",
+    "Invalid tag '{0}' in WriteMixed text",
+    "Usage",
+    defaultSeverity: DiagnosticSeverity.Warning,
+    isEnabledByDefault: true);
+
+  public static readonly DiagnosticDescriptor UnescapedTagRule = new(
+    UNESCAPED_TAG,
+    "Unescaped WriteMixed unknonw tag",
+    "If tag '{0}' in WriteMixed text is meant to be " +
+    "literal, must be escaped ('\\{0}')",
+    "Usage",
+    defaultSeverity: DiagnosticSeverity.Warning,
     isEnabledByDefault: true);
 }

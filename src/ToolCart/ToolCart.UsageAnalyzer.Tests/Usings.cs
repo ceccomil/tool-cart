@@ -1,7 +1,9 @@
 global using Microsoft.CodeAnalysis;
 global using Microsoft.CodeAnalysis.CSharp;
 global using Microsoft.CodeAnalysis.Diagnostics;
+global using Microsoft.Extensions.Hosting;
 global using Shouldly;
 global using System.Collections.Immutable;
 global using System.Reflection;
+global using ToolCart.Foundation;
 global using Xunit;
