@@ -22,7 +22,8 @@ internal sealed class CommandArgumentsProvider
 
   private Dictionary<string, string?> GetArguments()
   {
-    var dict = new Dictionary<string, string?>();
+    var dict = new Dictionary<string, string?>(
+      StringComparer.OrdinalIgnoreCase);
 
     for (var i = 0; i < _args.Length; i++)
     {
@@ -38,8 +39,7 @@ internal sealed class CommandArgumentsProvider
         i++;
       }
 
-      if (dict.Keys.Any(x => x.Equals(
-        arg, StringComparison.OrdinalIgnoreCase)))
+      if (dict.ContainsKey(arg))
       {
         throw new InvalidOperationException(
           $"Duplicate command line argument: `{source}`.");
@@ -82,7 +82,9 @@ internal sealed class CommandArgumentsProvider
       }
     }
 
-    return sb.ToString();
+    return sb
+      .ToString()
+      .Replace("__", ":");
   }
 
   public IConfigurationProvider Build(
