@@ -56,6 +56,46 @@ public class CommandArgumentsProviderTests
   }
 
   [Fact]
+  public void CommandArgumentsProvider_when_args_are_in_a_section()
+  {
+    // Arrange
+    var args = new string[]
+    {
+      "--mySection__Value1", "hello",
+      "--mySection__Value2", "world",
+    };
+
+    var conf = GetConfigurationManager(args);
+
+    // Act
+    var result = $"{conf["MySection:Value1"]} " +
+      $"{conf["MySection:Value2"]}";
+
+    // Assert
+    result
+      .ShouldBe("hello world");
+  }
+
+  [Fact]
+  public void CommandArgumentsProvider_when_args_have_nested_sections()
+  {
+    // Arrange
+    var args = new string[]
+    {
+      "--level1__level2__value", "deep",
+    };
+
+    var conf = GetConfigurationManager(args);
+
+    // Act
+    var result = conf["Level1:level2:value"];
+
+    // Assert
+    result
+      .ShouldBe("deep");
+  }
+
+  [Fact]
   public void CommandArgumentsProvider_when_duplicate_args()
   {
     // Arrange

@@ -82,7 +82,9 @@ internal sealed class CommandArgumentsProvider
       }
     }
 
-    return sb.ToString();
+    return sb
+      .ToString()
+      .Replace("__", ":");
   }
 
   public IConfigurationProvider Build(
