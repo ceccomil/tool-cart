@@ -114,4 +114,21 @@ public sealed class HostRunner
       ExtendedConsole.TrySetCursorVisibility(true);
     }
   }
+
+  /// <summary>
+  /// Create and run the host application.
+  /// </summary>
+  /// <returns></returns>
+  public async Task CreateAndRun<TMainService>(string[]? args) 
+    where TMainService : class, IExecutor
+  {
+    await Initialization(args);
+
+    _builder
+      .Services
+      .AddScoped<IExecutor, TMainService>();
+
+    await AppBuild();
+    await AppRun();
+  }
 }

@@ -1,7 +1,13 @@
 ﻿namespace ToolCart.Services;
 
-internal interface IAppOrchestrator : IHostedService
+/// <summary>
+/// The application orchestrator is responsible for managing the main execution flow of the application.
+/// </summary>
+public interface IAppOrchestrator : IHostedService
 {
+  /// <summary>
+  /// Gets the unique identifier for the current execution context.
+  /// </summary>
   Guid ExecutionId { get; }
 }
 
