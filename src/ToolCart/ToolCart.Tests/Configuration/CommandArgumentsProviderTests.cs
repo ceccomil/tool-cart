@@ -56,6 +56,121 @@ public class CommandArgumentsProviderTests
   }
 
   [Fact]
+  public void CommandArgumentsProvider_when_args_are_in_a_section()
+  {
+    // Arrange
+    var args = new string[]
+    {
+      "--mySection__Value1", "hello",
+      "--mySection__Value2", "world",
+    };
+
+    var conf = GetConfigurationManager(args);
+
+    // Act
+    var result = $"{conf["MySection:Value1"]} " +
+      $"{conf["MySection:Value2"]}";
+
+    // Assert
+    result
+      .ShouldBe("hello world");
+  }
+
+  [Fact]
+  public void CommandArgumentsProvider_when_args_have_nested_sections()
+  {
+    // Arrange
+    var args = new string[]
+    {
+      "--level1__level2__value", "deep",
+    };
+
+    var conf = GetConfigurationManager(args);
+
+    // Act
+    var result = conf["Level1:level2:value"];
+
+    // Assert
+    result
+      .ShouldBe("deep");
+  }
+
+  [Fact]
+  public void CommandArgumentsProvider_when_section_args_bind_to_options()
+  {
+    // Arrange
+    var args = new string[]
+    {
+      "--person__name", "Jane",
+      "--person__age", "28",
+    };
+
+    var conf = new ConfigurationBuilder()
+      .Add(new CommandArgumentsProvider(args))
+      .Build();
+
+    var services = new ServiceCollection();
+
+    services
+      .AddOptions<PersonOptions>()
+      .Bind(conf.GetSection("Person"))
+      .Validate(
+        o => !string.IsNullOrWhiteSpace(o.Name),
+        "Name is required.")
+      .Validate(
+        o => o.Age > 0,
+        "Age must be greater than zero.");
+
+    var sp = services.BuildServiceProvider();
+
+    // Act
+    var options = sp
+      .GetRequiredService<IOptions<PersonOptions>>()
+      .Value;
+
+    // Assert
+    options.Name.ShouldBe("Jane");
+    options.Age.ShouldBe(28);
+  }
+
+  [Fact]
+  public void CommandArgumentsProvider_when_section_options_fail_validation()
+  {
+    // Arrange: missing required "name" argument
+    var args = new string[]
+    {
+      "--person__age", "28",
+    };
+
+    var conf = new ConfigurationBuilder()
+      .Add(new CommandArgumentsProvider(args))
+      .Build();
+
+    var services = new ServiceCollection();
+
+    services
+      .AddOptions<PersonOptions>()
+      .Bind(conf.GetSection("Person"))
+      .Validate(
+        o => !string.IsNullOrWhiteSpace(o.Name),
+        "Name is required.");
+
+    var sp = services.BuildServiceProvider();
+
+    // Act
+    Action act = () => _ = sp
+      .GetRequiredService<IOptions<PersonOptions>>()
+      .Value;
+
+    // Assert
+    act
+      .ShouldThrow<OptionsValidationException>()
+      .Message
+      .ShouldContain("Name is required.");
+  }
+
+
+  [Fact]
   public void CommandArgumentsProvider_when_duplicate_args()
   {
     // Arrange
@@ -129,5 +244,11 @@ public class CommandArgumentsProviderTests
     //  $"in argument `{arg}`. Only letters, " +
     //  "numbers, hyphens, and underscores " +
     //  "are allowed.");
+  }
+
+  private sealed class PersonOptions
+  {
+    public string Name { get; set; } = string.Empty;
+    public int Age { get; set; }
   }
 }
