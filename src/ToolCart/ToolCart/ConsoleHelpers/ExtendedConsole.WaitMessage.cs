@@ -6,6 +6,7 @@ internal static partial class ExtendedConsole
   private static string _waitMessage = string.Empty;
   private static bool _isWaiting = false;
   private static Theme _waitTheme = null!;
+  private static CursorCoord _waitOrigin = default;
 
   public static async Task StartWait(
     string mex,
@@ -17,6 +18,8 @@ internal static partial class ExtendedConsole
     }
 
     _isWaiting = true;
+
+    TryGetCursorCoord(out _waitOrigin);
 
     theme ??= new(
       ConsoleColor.Black,
@@ -58,7 +61,7 @@ internal static partial class ExtendedConsole
 
     Console.Write(" \b");
 
-    TryRepositioning(_waitMessage);
+    TryRepositioning(_waitOrigin);
 
     Spinner.Reset();
 
