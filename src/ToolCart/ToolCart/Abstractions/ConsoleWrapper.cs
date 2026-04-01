@@ -1,8 +1,18 @@
 ﻿namespace ToolCart.Abstractions;
 
-internal sealed class ConsoleWrapper
-  : IConsoleWrapper
+internal sealed class ConsoleWrapper : IConsoleWrapper
 {
+  public bool TryGetCursorCoord(out CursorCoord coord) => ExtendedConsole
+    .TryGetCursorCoord(out coord);
+
+  public bool TrySetCursorCoord(CursorCoord coord) => ExtendedConsole
+    .TrySetCursorCoord(coord);
+
+  public bool TryRepositioning(
+    CursorCoord origin,
+    bool clearFromOriginToCurrent = true) => ExtendedConsole
+      .TryRepositioning(origin, clearFromOriginToCurrent);
+
   public void DeleteLastChar() => ExtendedConsole.DeleteLastChar();
 
   public int Read(
@@ -19,11 +29,14 @@ internal sealed class ConsoleWrapper
       .ReadKeyFromUser(isAlert);
 
   public string ReadLine(
-    Theme? theme = null) => ExtendedConsole.ReadLine(theme);
+    Theme? theme = null,
+    bool avoidTabAutoCompletion = false) => ExtendedConsole
+    .ReadLine(theme, avoidTabAutoCompletion);
 
   public string ReadLineFromUser(
-    bool isAlert = false) => ExtendedConsole
-      .ReadLineFromUser(isAlert);
+    bool isAlert = false,
+    bool avoidTabAutoCompletion = false) => ExtendedConsole
+      .ReadLineFromUser(isAlert, avoidTabAutoCompletion);
 
   public string ReadPasswordFromUser() => ExtendedConsole
     .ReadPasswordFromUser();
@@ -57,16 +70,6 @@ internal sealed class ConsoleWrapper
       .StartWait(mex, theme);
 
   public Task StopWait() => ExtendedConsole.StopWait();
-
-  public bool TryRepositioning(
-    string mex,
-    bool avoidBlanks = false) => ExtendedConsole
-      .TryRepositioning(mex, avoidBlanks);
-
-  public bool TryRepositioning(
-    int len,
-    bool avoidBlanks = false) => ExtendedConsole
-      .TryRepositioning(len, avoidBlanks);
 
   public bool TrySetCursorVisibility(
     bool visible) => ExtendedConsole

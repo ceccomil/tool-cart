@@ -7,18 +7,30 @@
 public interface IConsoleWrapper
 {
   /// <summary>
-  /// Tries to set the cursor position.
+  /// Attempts to retrieve the current cursor coordinates.
   /// </summary>
-  bool TryRepositioning(
-    string mex,
-    bool avoidBlanks = false);
+  /// <param name="coord">When this method returns, contains the coordinates of the cursor if the operation succeeds; otherwise, contains
+  /// the default value.</param>
+  /// <returns><see langword="true"/> if the cursor coordinates were successfully retrieved; otherwise, <see langword="false"/>.</returns>
+  bool TryGetCursorCoord(out CursorCoord coord);
 
   /// <summary>
-  /// Tries to set the cursor position.
+  /// Attempts to set the cursor position to the specified coordinates.
   /// </summary>
+  /// <param name="coord">The target coordinates to move the cursor to.</param>
+  /// <returns>true if the cursor position was successfully set; otherwise, false.</returns>
+  bool TrySetCursorCoord(CursorCoord coord);
+
+  /// <summary>
+  /// Attempts to reposition the cursor to the specified origin coordinate.
+  /// </summary>
+  /// <param name="origin">The target coordinate to which the cursor should be moved.</param>
+  /// <param name="clearFromOriginToCurrent">true to clear the area between the origin and the current cursor position after repositioning; otherwise, false.
+  /// The default is true.</param>
+  /// <returns>true if the cursor was successfully repositioned; otherwise, false.</returns>
   bool TryRepositioning(
-    int len,
-    bool avoidBlanks = false);
+    CursorCoord origin,
+    bool clearFromOriginToCurrent = true);
 
   /// <summary>
   /// Tries to set the cursor visibility.
@@ -133,13 +145,16 @@ public interface IConsoleWrapper
   /// <summary>
   /// Reads the next line of characters from the standard input stream.
   /// </summary>
-  string ReadLine(Theme? theme = default);
+  string ReadLine(
+    Theme? theme = default, 
+    bool avoidTabAutoCompletion = false);
 
   /// <summary>
   /// Reads the next line of characters from the standard input stream.
   /// </summary>
   string ReadLineFromUser(
-    bool isAlert = false);
+    bool isAlert = false,
+    bool avoidTabAutoCompletion = false);
 
   /// <summary>
   /// Reads a password from the user.

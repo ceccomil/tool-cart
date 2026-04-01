@@ -8,7 +8,7 @@ internal static partial class ExtendedConsole
   private static readonly object _consoleLock = new();
 #endif
 
-internal static Theme Question { get; private set; } = new(
+  internal static Theme Question { get; private set; } = new(
     ConsoleColor.Cyan,
     ConsoleColor.Black);
 
@@ -322,12 +322,13 @@ internal static Theme Question { get; private set; } = new(
   /// Reads the next line of characters from the standard input stream.
   /// </summary>
   public static string ReadLine(
-    Theme? theme = default)
+    Theme? theme = default,
+    bool avoidTabAutoCompletion = false)
   {
     var result = string.Empty;
 
-    AcceptUserInput(
-      () => result = Console.ReadLine(),
+    AcceptUserInput(() => 
+      result = ReadLine(avoidTabAutoCompletion),
       theme);
 
     return result;
@@ -337,7 +338,8 @@ internal static Theme Question { get; private set; } = new(
   /// Reads the next line of characters from the standard input stream.
   /// </summary>
   public static string ReadLineFromUser(
-    bool isAlert = false)
+    bool isAlert = false,
+    bool avoidTabAutoCompletion = false)
   {
     var theme = UserInput;
 
@@ -346,7 +348,13 @@ internal static Theme Question { get; private set; } = new(
       theme = AlertUserInput;
     }
 
-    return ReadLine(theme);
+    var result = string.Empty;
+
+    AcceptUserInput(() =>
+      result = ReadLine(avoidTabAutoCompletion),
+      theme);
+
+    return result;
   }
 
   /// <summary>
@@ -378,5 +386,226 @@ internal static Theme Question { get; private set; } = new(
     }
 
     return password;
+  }
+
+  private static string? ReadLine(bool avoidTab)
+  {
+    if (avoidTab)
+    {
+      return Console.ReadLine();
+    }
+
+    return ReadLineCoreWithTabPath();
+  }
+
+  private static string ReadLineCoreWithTabPath()
+  {
+    var sb = new StringBuilder();
+
+    // where the input starts (caller wrote the question already)
+    var startLeft = Console.CursorLeft;
+    var startTop = Console.CursorTop;
+
+    var lastLen = 0;
+
+    void Render()
+    {
+      lock (_consoleLock)
+      {
+        Console.SetCursorPosition(startLeft, startTop);
+
+        // clear previous content
+        if (lastLen > 0)
+        {
+          Console.Write(new string(' ', lastLen));
+          Console.SetCursorPosition(startLeft, startTop);
+        }
+
+        Console.Write(sb.ToString());
+        lastLen = sb.Length;
+      }
+    }
+
+    while (true)
+    {
+      var key = Console.ReadKey(intercept: true);
+
+      if (key.Key == ConsoleKey.Enter)
+      {
+        Console.WriteLine();
+        return sb.ToString();
+      }
+
+      if (key.Key == ConsoleKey.Backspace)
+      {
+        if (sb.Length > 0)
+        {
+          sb.Length--;
+          Render();
+        }
+
+        continue;
+      }
+
+      if (key.Key == ConsoleKey.Tab)
+      {
+        if (TryTabCompletePath(sb))
+        {
+          Render();
+        }
+        else
+        {
+          Console.Beep();
+        }
+
+        continue;
+      }
+
+      if (!char.IsControl(key.KeyChar))
+      {
+        sb.Append(key.KeyChar);
+        Render();
+      }
+    }
+  }
+
+  private static bool TryTabCompletePath(StringBuilder sb)
+  {
+    var line = sb.ToString();
+
+    // token = from last whitespace (or inside quotes) to end
+    var cursor = line.Length;
+
+    var quoteCount = 0;
+    for (var i = 0; i < cursor; i++)
+    {
+      if (line[i] == '"') { quoteCount++; }
+    }
+
+    var insideQuotes = (quoteCount % 2) == 1;
+
+    int tokenStart;
+    bool wasQuoted;
+
+    if (insideQuotes)
+    {
+      var lastQuote = line.LastIndexOf('"');
+      tokenStart = lastQuote >= 0 ? lastQuote + 1 : 0;
+      wasQuoted = true;
+    }
+    else
+    {
+      var lastWs = line.LastIndexOfAny([' ', '\t']);
+      tokenStart = lastWs >= 0 ? lastWs + 1 : 0;
+      wasQuoted = false;
+    }
+
+    var token = line[tokenStart..];
+    var tokenRaw = token.Trim('"');
+
+    // Normalize to OS separator
+    tokenRaw = tokenRaw
+      .Replace('/', Path.DirectorySeparatorChar)
+      .Replace('\\', Path.DirectorySeparatorChar);
+
+    var endsWithSep = tokenRaw.EndsWith(Path.DirectorySeparatorChar);
+
+    var dir = Path.GetDirectoryName(tokenRaw);
+    var prefix = Path.GetFileName(tokenRaw) ?? string.Empty;
+
+    var searchDir = string.IsNullOrEmpty(dir) ? "." : dir;
+
+    if (endsWithSep)
+    {
+      searchDir = tokenRaw;
+      prefix = string.Empty;
+      dir = tokenRaw.TrimEnd(Path.DirectorySeparatorChar);
+    }
+
+    if (!Directory.Exists(searchDir))
+    {
+      return false;
+    }
+
+    // Get matches (dirs + files) starting with prefix
+    var matches = Directory.EnumerateFileSystemEntries(searchDir, prefix + "*", SearchOption.TopDirectoryOnly)
+      .Select(Path.GetFileName)
+      .Where(x => !string.IsNullOrEmpty(x))
+      .Distinct(StringComparer.OrdinalIgnoreCase)
+      .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
+      .ToArray();
+
+    if (matches.Length == 0)
+    {
+      return false;
+    }
+
+    // One match => complete fully (+ \ if dir)
+    if (matches.Length == 1)
+    {
+      var name = matches[0]!;
+
+      var full = string.IsNullOrEmpty(dir) 
+        ? name 
+        : Path.Combine(dir, name);
+
+      if (Directory.Exists(Path.Combine(searchDir, name)))
+      {
+        full += Path.DirectorySeparatorChar;
+      }
+
+      var replacement = (wasQuoted || full.Contains(' ')) ? $"\"{full}\"" : full;
+
+      sb.Length = tokenStart;
+      sb.Append(replacement);
+      
+      return true;
+    }
+
+    // Many matches => extend to common prefix
+    var common = CommonPrefix(matches);
+    if (common.Length <= prefix.Length)
+    {
+      return false; // nothing more to add
+    }
+
+    var extended = string.IsNullOrEmpty(dir) ? common : Path.Combine(dir, common);
+    var repl2 = (wasQuoted || extended.Contains(' ')) ? $"\"{extended}\"" : extended;
+
+    sb.Length = tokenStart;
+    sb.Append(repl2);
+
+    return true;
+  }
+
+  private static string CommonPrefix(string?[] names)
+  {
+    if (names.Length == 0)
+    { 
+      return string.Empty; 
+    }
+
+    var prefix = names[0] ?? string.Empty;
+
+    for (var i = 1; i < names.Length; i++)
+    {
+      var other = names[i] ?? string.Empty;
+      var len = Math.Min(prefix.Length, other.Length);
+
+      var j = 0;
+      while (j < len && char.ToLowerInvariant(prefix[j]) == char.ToLowerInvariant(other[j]))
+      {
+        j++;
+      }
+
+      prefix = prefix[..j];
+
+      if (prefix.Length == 0)
+      {
+        break;
+      }
+    }
+
+    return prefix;
   }
 }
