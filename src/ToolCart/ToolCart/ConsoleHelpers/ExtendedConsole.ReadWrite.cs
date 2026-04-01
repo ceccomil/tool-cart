@@ -554,7 +554,10 @@ internal static partial class ExtendedConsole
         full += Path.DirectorySeparatorChar;
       }
 
-      var replacement = (wasQuoted || full.Contains(' ')) ? $"\"{full}\"" : full;
+      var replacement = BuildPathCompletionReplacement(
+        full,
+        alreadyQuoted: wasQuoted,
+        isFinalCompletion: true);
 
       sb.Length = tokenStart;
       sb.Append(replacement);
@@ -570,7 +573,11 @@ internal static partial class ExtendedConsole
     }
 
     var extended = string.IsNullOrEmpty(dir) ? common : Path.Combine(dir, common);
-    var repl2 = (wasQuoted || extended.Contains(' ')) ? $"\"{extended}\"" : extended;
+    
+    var repl2 = BuildPathCompletionReplacement(
+      extended,
+      alreadyQuoted: wasQuoted,
+      isFinalCompletion: false);
 
     sb.Length = tokenStart;
     sb.Append(repl2);
@@ -578,11 +585,34 @@ internal static partial class ExtendedConsole
     return true;
   }
 
+  private static string BuildPathCompletionReplacement(
+    string value,
+    bool alreadyQuoted,
+    bool isFinalCompletion)
+  {
+    if (alreadyQuoted)
+    {
+      return value;
+    }
+
+    if (!value.Contains(' '))
+    {
+      return value;
+    }
+
+    if (isFinalCompletion)
+    {
+      return $"\"{value}\"";
+    }
+
+    return $"\"{value}";
+  }
+
   private static string CommonPrefix(string?[] names)
   {
     if (names.Length == 0)
-    { 
-      return string.Empty; 
+    {
+      return string.Empty;
     }
 
     var prefix = names[0] ?? string.Empty;
