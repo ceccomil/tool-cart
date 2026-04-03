@@ -81,14 +81,23 @@ internal sealed class AppOrchestrator(
         "The executor service is not found!",
          null);
 
-      _appHandler.Exit(
-        ErrorCode.MissingRequirements);
+      await _appHandler.Exit(ErrorCode.MissingRequirements);
 
       return;
     }
 
     await executor.MainTask(
       _appHandler.StoppingToken);
+
+    var flusher = scope
+      .ServiceProvider
+      .GetService<IFileLogsFlusher>();
+
+    if (flusher is not null)
+    {
+      await flusher.FlushAsync(
+        _appHandler.StoppingToken);
+    }
   }
 
   private async Task Run()
@@ -152,8 +161,7 @@ internal sealed class AppOrchestrator(
           "due to consecutive failures!",
           null);
 
-        _appHandler.Exit(
-          ErrorCode.ConsecutiveFailures);
+        await _appHandler.Exit(ErrorCode.ConsecutiveFailures);
       }
 
       executionScope.Dispose();
@@ -190,7 +198,7 @@ internal sealed class AppOrchestrator(
       .StoppingToken
       .IsCancellationRequested)
     {
-      _appHandler.Exit();
+      await _appHandler.Exit();
     }
 
     if (_executingTask is null)

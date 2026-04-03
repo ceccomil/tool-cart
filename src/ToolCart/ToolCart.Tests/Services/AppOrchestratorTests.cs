@@ -91,7 +91,7 @@ public class AppOrchestratorTests
       Arg.Any<Exception>(),
       Arg.Any<Func<object?, Exception?, string>>());
 
-    _appHandler
+    await _appHandler
       .Received(1)
       .Exit();
   }
