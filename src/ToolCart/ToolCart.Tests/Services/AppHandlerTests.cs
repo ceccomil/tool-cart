@@ -1,6 +1,4 @@
-﻿using ToolCart.Foundation;
-
-namespace ToolCart.Tests.Services;
+﻿namespace ToolCart.Tests.Services;
 
 [Collection("AppHandler Tests")]
 public class AppHandlerTests
@@ -11,18 +9,22 @@ public class AppHandlerTests
   private readonly ILogger<AppHandler> _logger = Substitute
     .For<ILogger<AppHandler>>();
 
+  IServiceProvider _serviceProvider = Substitute
+    .For<IServiceProvider>();
+
   [Fact]
-  public void Exit_when_exit_code_is_zero()
+  public async Task Exit_when_exit_code_is_zero()
   {
     // Arrange
     var sut = new AppHandler(
       _appLifetime,
+      _serviceProvider,
       _logger);
 
     Environment.ExitCode = 0;
 
     // Act
-    sut.Exit();
+    await sut.Exit();
 
     // Assert
     _logger
@@ -38,13 +40,14 @@ public class AppHandlerTests
   [InlineData(ErrorCode.MissingRequirements, "[201] MissingRequirements")]
   [InlineData(ErrorCode.CriticalError, "[301] CriticalError")]
   [InlineData((ErrorCode)1_000, "1000")]
-  public void Exit_when_exit_when_error(
+  public async Task Exit_when_exit_when_error(
     ErrorCode error,
     string expected)
   {
     // Arrange
     var sut = new AppHandler(
       _appLifetime,
+      _serviceProvider,
       _logger);
 
     Environment.ExitCode = 0;
@@ -54,7 +57,7 @@ public class AppHandlerTests
       $" with code {expected}.";
 
     // Act
-    sut.Exit(error);
+    await sut.Exit(error);
 
     // Assert
     _logger

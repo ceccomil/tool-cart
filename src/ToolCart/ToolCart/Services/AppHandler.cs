@@ -15,18 +15,19 @@ public interface IAppHandler
   /// with an optional exit code.
   /// </summary>
   /// <param name="exitCode"></param>
-  void Exit(int exitCode = 0);
+  Task Exit(int exitCode = 0);
 
   /// <summary>
   /// Exits the application
   /// with a known error code.
   /// </summary>
   /// <param name="errorCode"></param>
-  void Exit(ErrorCode errorCode);
+  Task Exit(ErrorCode errorCode);
 }
 
 internal sealed class AppHandler(
   IHostApplicationLifetime _appLifetime,
+  IServiceProvider _serviceProvider,
   ILogger<AppHandler> _logger)
   : IAppHandler
 {
@@ -56,13 +57,22 @@ internal sealed class AppHandler(
       strCode);
   }
 
-  public void Exit(int exitCode = 0)
+  public async Task Exit(int exitCode = 0)
   {
     LogExit(exitCode);
+
+    var flusher = _serviceProvider
+      .GetService<IFileLogsFlusher>();
+
+    if (flusher is not null)
+    {
+      await flusher.FlushAsync(StoppingToken);
+    }
+
     Environment.ExitCode = exitCode;
     _appLifetime.StopApplication();
   }
 
-  public void Exit(ErrorCode errorCode) => Exit(
+  public Task Exit(ErrorCode errorCode) => Exit(
     (int)errorCode);
 }

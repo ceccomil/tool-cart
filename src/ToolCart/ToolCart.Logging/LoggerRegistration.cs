@@ -83,6 +83,7 @@ public static class LoggerRegistration
   {
     services
       .AddSingleton<IExecutionCorrelationScopeFactory, CorrelationScopeFactory>()
+      .AddSingleton<IFileLogsFlusher, FileLogsFlusher>()
       .AddLogging(
         builder => builder
           .ToolCartLoggerRegistration(filters));
