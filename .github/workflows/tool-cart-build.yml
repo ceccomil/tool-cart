@@ -37,7 +37,7 @@ jobs:
         dotnet-version: 11.0.x
 
     - name: Restore dependencies
-      run: dotnet restore ./src/ToolCart/ToolCart.sln
+      run: dotnet restore ./src/ToolCart/ToolCart.slnx
 
     - name: Build
       run: dotnet build ./src/ToolCart/ToolCart.slnx --no-restore --configuration $env:BUILD_CONFIG
