@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Authors>Chekko Milani</Authors>
     <Company>Chekko Milani</Company>
-    <VersionPrefix>1.2.7</VersionPrefix>
+    <VersionPrefix>2.0.0</VersionPrefix>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -15,6 +15,7 @@
     <PackageProjectUrl>https://github.com/ceccomil/tool-cart</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
   <!-- Debug-only packing -->
@@ -23,5 +24,5 @@
 
     <PackageOutputPath>$(MSBuildProjectDirectory)/../../PackageOutput</PackageOutputPath>
   </PropertyGroup>
-  
+
 </Project>

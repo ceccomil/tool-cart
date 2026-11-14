@@ -4,4 +4,4 @@ var hostRunner = HostBuilder.Get();
 
 await hostRunner.CreateAndRun<ClockSvc>(
   args,
-  ".NET8 Application is starting");
+  ".NET11 Application is starting");

@@ -24,8 +24,8 @@ public sealed class ClockSvc(
       appendNewLine: false);
 
     _console.TryRepositioning(
-      67,
-      avoidBlanks: true);
+      new CursorCoord(0, 0),
+      clearFromOriginToCurrent: false);
 
     _logger.LogInformation(
       "ClockSvc MainTask executed at {Time}",

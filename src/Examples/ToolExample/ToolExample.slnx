@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="nuget.config" />
+  </Folder>
+  <Project Path="ExampleCode/ExampleCode.csproj" />
+  <Project Path="ToolExample1/ToolExample1.csproj" />
+  <Project Path="ToolExample2/ToolExample2.csproj" />
+  <Project Path="ToolExample3/ToolExample3.csproj" />
+  <Project Path="ToolExample4/ToolExample4.csproj" />
+</Solution>

@@ -1,0 +1,18 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="../../.github/workflows/tool-cart-build.yml" />
+    <File Path="../../README.md" />
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Project Path="Example1/Example1.csproj" />
+  <Project Path="Example2/Example2.csproj" />
+  <Project Path="ToolCart.Foundation/ToolCart.Foundation.csproj" />
+  <Project Path="ToolCart.Logging.Tests/ToolCart.Logging.Tests.csproj" />
+  <Project Path="ToolCart.Logging/ToolCart.Logging.csproj" />
+  <Project Path="ToolCart.Tests/ToolCart.Tests.csproj" />
+  <Project Path="ToolCart.UsageAnalyzer.Tests/ToolCart.UsageAnalyzer.Tests.csproj" />
+  <Project Path="ToolCart.UsageAnalyzer/ToolCart.UsageAnalyzer.csproj" />
+  <Project Path="ToolCart/ToolCart.csproj" />
+</Solution>

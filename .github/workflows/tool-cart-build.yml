@@ -26,24 +26,24 @@ jobs:
         nuget-api-key: ${{ secrets.CECCOMIL_NUGET }}
         nuget-version: '6.x'
 
-    - name: Setup .NET8
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 8.0.x
-
     - name: Setup .NET10
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 10.0.x
 
+    - name: Setup .NET11
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 11.0.x
+
     - name: Restore dependencies
-      run: dotnet restore ./src/ToolCart/ToolCart.sln
+      run: dotnet restore ./src/ToolCart/ToolCart.slnx
 
     - name: Build
-      run: dotnet build ./src/ToolCart/ToolCart.sln --no-restore --configuration $env:BUILD_CONFIG
+      run: dotnet build ./src/ToolCart/ToolCart.slnx --no-restore --configuration $env:BUILD_CONFIG
 
     - name: Test
-      run: dotnet test ./src/ToolCart/ToolCart.sln /p:Configuration=$env:BUILD_CONFIG --no-restore --verbosity normal
+      run: dotnet test ./src/ToolCart/ToolCart.slnx /p:Configuration=$env:BUILD_CONFIG --no-restore --verbosity normal
 
     - name: Publish (packages)
       if: startsWith(github.ref, 'refs/tags/v')
